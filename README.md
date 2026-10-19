@@ -116,7 +116,9 @@ nexo-bank/
 │   │   ├── mld.png
 │   │   └── mpd.png
 │   └── dictionnaire-donnees.pdf
-├── sql/                         code Sql (à venir)
+├── sql/
+│   ├── nexobank.sql
+│   └── donnees_test.sql
 └── src/                         code Java (à venir)
 ```
 
@@ -138,9 +140,9 @@ Le projet suit une démarche agile adaptée à un travail en solo :
 - [x] Dictionnaire de données
 - [x] MCD
 - [x] MLD
-- [] Diagramme de cas d'utilisation
-- [] Diagramme de classes
-- [ ] MPD et base de données MySQL
+- [x] Diagramme de cas d'utilisation
+- [x] Diagramme de classes
+- [x] MPD et base de données MySQL
 - [ ] Application Java en console
 - [ ] Connexion MySQL (JDBC et DAO)
 - [ ] Interface graphique
