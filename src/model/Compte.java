@@ -1,0 +1,59 @@
+package model;
+
+import exception.MontantInvalideException;
+import exception.SoldeInsuffisantException;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
+
+public abstract class Compte implements Viriable {
+
+    private String numero;
+    private BigDecimal solde;
+    private LocalDate dateOuverture;
+    private Client client;
+
+    public Compte(String numero, BigDecimal solde, LocalDate dateOuverture, Client client) {
+        this.numero = numero;
+        this.solde = solde;
+        this.dateOuverture = dateOuverture;
+        this.client = client;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public BigDecimal getSolde() {
+        return solde;
+    }
+
+    public LocalDate getDateOuverture() {
+        return dateOuverture;
+    }
+
+    public Client getClient() {
+        return client;
+    }
+
+    public void deposer(BigDecimal montant) throws MontantInvalideException {
+        if (montant.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MontantInvalideException(montant);
+        }
+        solde = solde.add(montant);
+    }
+
+    public abstract void retirer(BigDecimal montant)
+            throws SoldeInsuffisantException, MontantInvalideException;
+
+    @Override
+    public void virer(Compte destination, BigDecimal montant)
+            throws SoldeInsuffisantException, MontantInvalideException {
+        this.retirer(montant);
+        destination.deposer(montant);
+    }
+
+    protected void setSolde(BigDecimal solde) {
+        this.solde = solde;
+    }
+}
