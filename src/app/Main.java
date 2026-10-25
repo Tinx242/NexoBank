@@ -2,12 +2,11 @@ package app;
 
 import exception.MontantInvalideException;
 import exception.SoldeInsuffisantException;
-import model.Client;
-import model.CompteEpargne;
-import model.TypePiece;
+import model.*;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class Main {
     public static void main(String[] args) {
@@ -25,6 +24,10 @@ public class Main {
         } catch (SoldeInsuffisantException | MontantInvalideException e) {
             System.out.println("Erreur : " + e.getMessage());          // il manque 980.00 EUR
         }
+
+        Operation o = new Operation(TypeOperation.DEPOT, new BigDecimal("100.00"),
+                LocalDateTime.of(2025, 6, 20, 11, 0), "Dépôt initial");
+        System.out.println(o);
     }
 
 }
