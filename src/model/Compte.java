@@ -5,6 +5,9 @@ import exception.SoldeInsuffisantException;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 public abstract class Compte implements Viriable {
 
@@ -12,6 +15,8 @@ public abstract class Compte implements Viriable {
     private BigDecimal solde;
     private LocalDate dateOuverture;
     private Client client;
+
+    private final List<Operation> historique = new ArrayList<>();
 
     public Compte(String numero, BigDecimal solde, LocalDate dateOuverture, Client client) {
         this.numero = numero;
@@ -41,10 +46,12 @@ public abstract class Compte implements Viriable {
             throw new MontantInvalideException(montant);
         }
         solde = solde.add(montant);
+        enregistrer(TypeOperation.DEPOT, montant, "Dépôt");
     }
 
     public abstract void retirer(BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException;
+
 
     @Override
     public void virer(Compte destination, BigDecimal montant)
@@ -55,5 +62,13 @@ public abstract class Compte implements Viriable {
 
     protected void setSolde(BigDecimal solde) {
         this.solde = solde;
+    }
+
+    protected void enregistrer(TypeOperation type, BigDecimal montant, String libelle) {
+        historique.add(new Operation(type, montant, LocalDateTime.now(), libelle));
+    }
+
+    public List<Operation> getHistorique() {
+        return List.copyOf(historique);
     }
 }

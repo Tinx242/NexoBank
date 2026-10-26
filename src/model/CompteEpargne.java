@@ -29,24 +29,13 @@ public class CompteEpargne extends Compte {
     @Override
     public void retirer(BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException {
-        // TODO 4 : même logique que le compte courant, mais SANS découvert :
-        //          le disponible est simplement le solde
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(montant);
         }
-
-        BigDecimal solde = getSolde();
-
-        if (montant.compareTo(solde) > 0) {
-            throw new SoldeInsuffisantException(montant.subtract(solde));
+        if (montant.compareTo(getSolde()) > 0) {
+            throw new SoldeInsuffisantException(montant.subtract(getSolde()));
         }
         setSolde(getSolde().subtract(montant));
-    }
-
-    public void ajouterInterets() {
-        BigDecimal nouveauSolde = getSolde()
-                .multiply(BigDecimal.ONE.add(tauxInteret))
-                .setScale(2, RoundingMode.HALF_UP);
-        setSolde(nouveauSolde);
+        enregistrer(TypeOperation.RETRAIT, montant, "Retrait");
     }
 }

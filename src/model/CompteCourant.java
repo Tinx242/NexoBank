@@ -26,12 +26,11 @@ public class CompteCourant extends Compte {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(montant);
         }
-
         BigDecimal disponible = getSolde().add(decouvertAutorise);
-
         if (montant.compareTo(disponible) > 0) {
             throw new SoldeInsuffisantException(montant.subtract(disponible));
         }
         setSolde(getSolde().subtract(montant));
+        enregistrer(TypeOperation.RETRAIT, montant, "Retrait");
     }
 }
