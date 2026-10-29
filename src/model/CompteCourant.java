@@ -21,7 +21,7 @@ public class CompteCourant extends Compte {
     }
 
     @Override
-    public void retirer(BigDecimal montant)
+    protected void debiter(BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(montant);
@@ -31,6 +31,5 @@ public class CompteCourant extends Compte {
             throw new SoldeInsuffisantException(montant.subtract(disponible));
         }
         setSolde(getSolde().subtract(montant));
-        enregistrer(TypeOperation.RETRAIT, montant, "Retrait");
     }
 }

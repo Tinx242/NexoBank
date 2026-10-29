@@ -9,25 +9,20 @@ import java.time.LocalDate;
 
 public class CompteEpargne extends Compte {
 
-    // TODO 1 : attribut privé tauxInteret (BigDecimal), par exemple 0.02 pour 2 %
     private BigDecimal tauxInteret;
 
-    // TODO 2 : constructeur (numero, solde, dateOuverture, client, tauxInteret)
-    //          avec super(...) en première ligne
-    public CompteEpargne(String numero, BigDecimal solde, LocalDate dateOuverture, Client client, BigDecimal tauxInteret){
+    public CompteEpargne(String numero, BigDecimal solde, LocalDate dateOuverture,
+                         Client client, BigDecimal tauxInteret) {
         super(numero, solde, dateOuverture, client);
-
         this.tauxInteret = tauxInteret;
     }
-
-    // TODO 3 : getter getTauxInteret()
 
     public BigDecimal getTauxInteret() {
         return tauxInteret;
     }
 
     @Override
-    public void retirer(BigDecimal montant)
+    protected void debiter(BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException {
         if (montant.compareTo(BigDecimal.ZERO) <= 0) {
             throw new MontantInvalideException(montant);
@@ -36,6 +31,16 @@ public class CompteEpargne extends Compte {
             throw new SoldeInsuffisantException(montant.subtract(getSolde()));
         }
         setSolde(getSolde().subtract(montant));
-        enregistrer(TypeOperation.RETRAIT, montant, "Retrait");
+    }
+
+    public void ajouterInterets() {
+        BigDecimal nouveauSolde = getSolde()
+                .multiply(BigDecimal.ONE.add(tauxInteret))
+                .setScale(2, RoundingMode.HALF_UP);
+        BigDecimal interets = nouveauSolde.subtract(getSolde());
+        setSolde(nouveauSolde);
+        if (interets.compareTo(BigDecimal.ZERO) > 0) {
+            enregistrer(TypeOperation.INTERETS, interets, "Intérêts");
+        }
     }
 }

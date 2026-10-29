@@ -5,7 +5,7 @@ import exception.SoldeInsuffisantException;
 
 import java.math.BigDecimal;
 
-public interface Viriable {
+public interface Variable {
     void virer(Compte destination, BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException;
 }

@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Compte implements Viriable {
+public abstract class Compte implements Variable {
 
     private String numero;
     private BigDecimal solde;
@@ -41,24 +41,41 @@ public abstract class Compte implements Viriable {
         return client;
     }
 
+    public List<Operation> getHistorique() {
+        return List.copyOf(historique);
+    }
+
     public void deposer(BigDecimal montant) throws MontantInvalideException {
-        if (montant.compareTo(BigDecimal.ZERO) <= 0) {
-            throw new MontantInvalideException(montant);
-        }
-        solde = solde.add(montant);
+        crediter(montant);
         enregistrer(TypeOperation.DEPOT, montant, "Dépôt");
     }
 
-    public abstract void retirer(BigDecimal montant)
-            throws SoldeInsuffisantException, MontantInvalideException;
-
+    public void retirer(BigDecimal montant)
+            throws SoldeInsuffisantException, MontantInvalideException {
+        debiter(montant);
+        enregistrer(TypeOperation.RETRAIT, montant, "Retrait");
+    }
 
     @Override
     public void virer(Compte destination, BigDecimal montant)
             throws SoldeInsuffisantException, MontantInvalideException {
-        this.retirer(montant);
-        destination.deposer(montant);
+        debiter(montant);
+        destination.crediter(montant);
+        enregistrer(TypeOperation.VIREMENT_SORTANT, montant,
+                "Virement vers " + destination.getClient().getNomComplet());
+        destination.enregistrer(TypeOperation.VIREMENT_ENTRANT, montant,
+                "Virement reçu de " + client.getNomComplet());
     }
+
+    protected void crediter(BigDecimal montant) throws MontantInvalideException {
+        if (montant.compareTo(BigDecimal.ZERO) <= 0) {
+            throw new MontantInvalideException(montant);
+        }
+        solde = solde.add(montant);
+    }
+
+    protected abstract void debiter(BigDecimal montant)
+            throws SoldeInsuffisantException, MontantInvalideException;
 
     protected void setSolde(BigDecimal solde) {
         this.solde = solde;
@@ -68,7 +85,9 @@ public abstract class Compte implements Viriable {
         historique.add(new Operation(type, montant, LocalDateTime.now(), libelle));
     }
 
-    public List<Operation> getHistorique() {
-        return List.copyOf(historique);
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + " " + numero + " - "
+                + client.getNomComplet() + " - solde : " + solde + " EUR";
     }
 }
